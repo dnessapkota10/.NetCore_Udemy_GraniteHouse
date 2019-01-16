@@ -1,0 +1,20 @@
+﻿@model int
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+    
+    This is the common share buttons that can be used by other many views as a partial view
+*@
+
+<td style="width:150px;">
+    <div class="btn-group" role="group">
+        <a type="button" class="btn btn-primary" href="@Url.Action("Edit/" + Model)">
+            <i class="fas fa-edit"></i> <!--fontawesome edit icon-->
+        </a>
+        <a type="button" class="btn btn-success" href="@Url.Action("Details/" + Model)">
+            <i class="far fa-list-alt"></i> <!--fontawesome details (list) icon-->
+        </a>
+        <a type="button" class="btn btn-danger" href="@Url.Action("Delete/" + Model)">
+            <i class="fas fa-trash-alt"></i> <!--fontawesome delete icon-->
+        </a>
+    </div>
+</td>
