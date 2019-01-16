@@ -47,7 +47,7 @@ namespace GraniteHouse.Areas.Admin.Controllers
         }
 
         //EDIT 
-        //GET - Edit new product type
+        //GET - Edit product type
         public async Task<IActionResult> Edit(int? id)
         {
             if(id==null)
@@ -62,7 +62,7 @@ namespace GraniteHouse.Areas.Admin.Controllers
             return View(productType);
         }
 
-        //POST - Edit new product type
+        //POST - Edit product type
         [HttpPost]
         [ValidateAntiForgeryToken] // Security mechanism that .net implmented for us. Gets added to request and server checks if the request is not altered on the way
         public async Task<IActionResult> Edit(int id, Models.ProductTypes productTypes)
@@ -82,6 +82,22 @@ namespace GraniteHouse.Areas.Admin.Controllers
             return View(productTypes);
         }
 
+
+        //DETAILS 
+        //GET - Details product type
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var productType = await _db.ProductTypes.FindAsync(id);
+            if (productType == null)
+            {
+                return NotFound();
+            }
+            return View(productType);
+        }
 
     }
 }
