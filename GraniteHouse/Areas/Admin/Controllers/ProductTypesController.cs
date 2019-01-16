@@ -99,5 +99,35 @@ namespace GraniteHouse.Areas.Admin.Controllers
             return View(productType);
         }
 
+
+        //DELETE 
+        //GET - Delete product type
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var productType = await _db.ProductTypes.FindAsync(id);
+            if (productType == null)
+            {
+                return NotFound();
+            }
+            return View(productType);
+        }
+
+        //POST - Delete product type
+        [HttpPost, ActionName("Delete")] //When two action method name has same name and parameter... we want to use same action method name Delete(int id--without ?) but DeleteConfirmed as controller method    
+        [ValidateAntiForgeryToken] // Security mechanism that .net implmented for us. Gets added to request and server checks if the request is not altered on the way
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var productTypes = await _db.ProductTypes.FindAsync(id);
+            _db.ProductTypes.Remove(productTypes);
+            
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
