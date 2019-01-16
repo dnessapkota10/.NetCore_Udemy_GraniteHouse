@@ -16,6 +16,8 @@ namespace GraniteHouse.Data
         //Adding model to the database        
         public DbSet<ProductTypes> ProductTypes { get; set; }
 
+        //Adding Product
+        public DbSet<Product> Product { get; set; }
         //After this step you will need to add migration and update database
         // PM> add-migration addProductTypesToDatabase
         // PM> update-database
