@@ -24,6 +24,7 @@ namespace GraniteHouse.Areas.Admin.Controllers
             return View(_db.ProductTypes.ToList()); //EF to access db, extract list of product types and send to view
         }
 
+        //CREATE
         //GET - Create new product type
         public IActionResult Create()
         {
@@ -44,6 +45,43 @@ namespace GraniteHouse.Areas.Admin.Controllers
             }
             return View(productTypes);
         }
+
+        //EDIT 
+        //GET - Edit new product type
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if(id==null)
+            {
+                return NotFound(); 
+            }
+            var productType = await _db.ProductTypes.FindAsync(id);
+            if (productType == null)
+            {
+                return NotFound(); 
+            }
+            return View(productType);
+        }
+
+        //POST - Edit new product type
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Security mechanism that .net implmented for us. Gets added to request and server checks if the request is not altered on the way
+        public async Task<IActionResult> Edit(int id, Models.ProductTypes productTypes)
+        {
+            if (id != productTypes.Id)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                
+                _db.Update(productTypes);
+                await _db.SaveChangesAsync();
+                //return RedirectToAction("Index"); //This can have typo
+                return RedirectToAction(nameof(Index));
+            }
+            return View(productTypes);
+        }
+
 
     }
 }
