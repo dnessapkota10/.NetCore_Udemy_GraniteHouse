@@ -28,8 +28,11 @@
                 @Html.DisplayNameFor(m => m.Available)
             </th>
             <th>
+                @Html.DisplayNameFor(m => m.ShadeColor)
+            </th>
+            <th>
                 @Html.DisplayNameFor(m => m.ProductTypes)
-            </th>            
+            </th>
             <th></th>
             <th></th>
         </tr>
@@ -45,6 +48,9 @@
             </td>
             <td>
                 @Html.DisplayFor(m => item.Available)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.ShadeColor)
             </td>
             <td>
                 @Html.DisplayFor(m => item.ProductTypes.Name)

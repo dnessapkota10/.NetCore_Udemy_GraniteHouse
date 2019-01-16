@@ -88,8 +88,74 @@ namespace GraniteHouse.Controllers
 
             await _db.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
-            
+            return RedirectToAction(nameof(Index));            
+        }
+
+
+        //EDIT
+        //Get : Edit Product
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            productViewModel.Product = await _db.Product.Include(m => m.ProductTypes).SingleOrDefaultAsync(m=>m.Id==id);
+
+            if (productViewModel.Product == null)
+            {
+                return NotFound();
+            }
+
+            return View(productViewModel);
+        }
+
+        //Post : Edit product        
+        [HttpPost, ActionName("Edit")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id) //we do not need ProductViewModel here because it is already binded
+        {
+            if (ModelState.IsValid)
+            {
+                string webRootPath = _hostingEnvironmet.WebRootPath;
+                var files = HttpContext.Request.Form.Files;
+                var productFromDb = _db.Product.Where(m => m.Id == productViewModel.Product.Id).FirstOrDefault();
+
+                if(files.Count > 0 && files[0] != null)
+                {
+                    //If user uploads an image
+                    var uploads = Path.Combine(webRootPath, StaticDetail.ImageFolder);
+                    var extension_new = Path.GetExtension(files[0].FileName);
+                    var extension_old = Path.GetExtension(productFromDb.Image);
+
+                    if (System.IO.File.Exists(Path.Combine(uploads, productViewModel.Product.Id + extension_old)))
+                    {
+                        System.IO.File.Delete(Path.Combine(uploads, productViewModel.Product.Id + extension_old)); //Delete old file
+                    }
+                    using (var filestream = new FileStream(Path.Combine(uploads, productViewModel.Product.Id + extension_new), FileMode.Create))
+                    {
+                        files[0].CopyTo(filestream);
+                    }
+                    productFromDb.Image = @"\" + StaticDetail.ImageFolder + @"\" + productViewModel.Product.Id + extension_new; //save image path to DB
+                }
+                if(productViewModel.Product.Image != null)
+                {
+                    productFromDb.Image = productViewModel.Product.Image;
+                }
+                productFromDb.Name = productViewModel.Product.Name;
+                productFromDb.Price = productViewModel.Product.Price;
+                productFromDb.ProductTypes = productViewModel.Product.ProductTypes;
+                productFromDb.Available = productViewModel.Product.Available;
+                productFromDb.ShadeColor = productViewModel.Product.ShadeColor;
+
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return View(productViewModel);
+            }
         }
     }
 }
