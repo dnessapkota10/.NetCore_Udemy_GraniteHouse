@@ -31,7 +31,6 @@ namespace GraniteHouse.Controllers
                 Product = new Models.Product()
                 
             };
-
         }
 
         public async Task<IActionResult> Index()
@@ -144,7 +143,7 @@ namespace GraniteHouse.Controllers
                 }
                 productFromDb.Name = productViewModel.Product.Name;
                 productFromDb.Price = productViewModel.Product.Price;
-                productFromDb.ProductTypes = productViewModel.Product.ProductTypes;
+                productFromDb.ProductTypeId = productViewModel.Product.ProductTypeId;
                 productFromDb.Available = productViewModel.Product.Available;
                 productFromDb.ShadeColor = productViewModel.Product.ShadeColor;
 
@@ -156,6 +155,25 @@ namespace GraniteHouse.Controllers
             {
                 return View(productViewModel);
             }
+        }
+
+        
+        //DETAILS
+        //Get : Product Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            productViewModel.Product = await _db.Product.Include(m => m.ProductTypes).SingleOrDefaultAsync(m => m.Id == id);
+
+            if (productViewModel.Product == null)
+            {
+                return NotFound();
+            }
+
+            return View(productViewModel);
         }
     }
 }
