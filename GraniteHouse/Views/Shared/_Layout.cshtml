@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using GraniteHouse.Extensions
+@using GraniteHouse.Utility
+
+<!--Inject HttpContextAccessor-->
+@inject IHttpContextAccessor HttpContextAccessor;
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -27,6 +34,32 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="ProductTypes" asp-action="Index">Product Types</a></li>
                 <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a></li>
+                <!--Display no of items in shopping carts-->
+                @if (HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart") != null)
+                {
+                    <li style="color:white;">
+                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
+                            <i class="fas fa-shopping-cart">
+                                &nbsp;
+                                @{
+                                    var count = HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart").Count; //no of items in shopping cart
+                                }
+                                (@count)
+                            </i>
+                        </a>
+                    </li>
+                }
+                else //!-- nothing in the session/cart
+                {
+                    <li style="color:white;">
+                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
+                            <i class="fas fa-shopping-cart">
+                                &nbsp;
+                                (0)
+                            </i>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
         <div>
