@@ -1,0 +1,67 @@
+﻿@model IEnumerable<GraniteHouse.Models.Product>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br /><br />
+
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Product List</h2>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-action="Create" class="btn btn-info"><i class="fas fa-plus"></i>&nbsp; New Product</a>
+    </div>
+</div>
+
+<br />
+<div>
+    <table class="table table-striped border">
+        <tr class="table-info">
+            <th>
+                @Html.DisplayNameFor(m => m.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Available)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.ShadeColor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.ProductTypes)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(m => item.Name)
+            </td>
+            <td>
+                @String.Format("{0:c}",item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.Available)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.ShadeColor)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.ProductTypes.Name)
+            </td>
+            <td>
+                <!--Partial view _TableButtonPartial.cshtml-->
+                <partial name="_TableButtonPartial" model="item.Id" />
+                <!--We are passing item Id to the partial view that will replace Model in ("Edit/" + Model)-->
+            </td>
+        </tr>
+
+        }
+    </table>
+</div>
