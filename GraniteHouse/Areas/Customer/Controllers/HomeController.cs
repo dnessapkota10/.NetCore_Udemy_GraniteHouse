@@ -33,7 +33,7 @@ namespace GraniteHouse.Controllers
             return View(product);
         }
         
-        //Post : Product Detail
+        //Post : Product Detail - Add items to bag
         [HttpPost, ActionName("Details")]
         [ValidateAntiForgeryToken]
         public IActionResult DetailsPost(int id)
@@ -46,6 +46,22 @@ namespace GraniteHouse.Controllers
             listShoppingCart.Add(id);
             HttpContext.Session.Set("ssShoppingCart", listShoppingCart); //Setting our session variable ssShoppingCart
             return RedirectToAction("Index", "Home", new { area = "Customer" });
+        }
+
+
+        //Remove item from bag/cart
+        public IActionResult Remove(int id)
+        {
+            List<int> listShoppingCart = HttpContext.Session.Get<List<int>>("ssShoppingCart"); //Get from Session using Extension method of Extension class SesssionExtensions
+            if (listShoppingCart.Count > 0)
+            {
+                if (listShoppingCart.Contains(id))
+                {
+                    listShoppingCart.Remove(id);
+                }
+            }
+            HttpContext.Session.Set("ssShoppingCart", listShoppingCart); //Setting our session variable ssShoppingCart
+            return RedirectToAction(nameof(Index));
         }
 
 
