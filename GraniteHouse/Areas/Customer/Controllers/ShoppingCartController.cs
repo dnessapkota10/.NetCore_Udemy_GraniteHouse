@@ -36,7 +36,7 @@ namespace GraniteHouse.Areas.Customer.Controllers
             {
                 foreach(int cartItem in listShoppingCart)
                 {
-                    Product product = _db.Product.Include(p=>p.ProductTypes).Where(p => p.Id == cartItem).FirstOrDefault();
+                    Product product = await _db.Product.Include(p=>p.ProductTypes).Where(p => p.Id == cartItem).FirstOrDefaultAsync();
                     shoppingCartViewModel.Products.Add(product);
                 }
             }
@@ -77,6 +77,23 @@ namespace GraniteHouse.Areas.Customer.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        
+       
+        //Remove item from shopping cart
+        public IActionResult Remove(int id)
+        {
+            List<int> listItems = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+
+            if(listItems.Count > 0)
+            {
+                if (listItems.Contains(id))
+                {
+                    listItems.Remove(id);
+                }
+            }
+
+            HttpContext.Session.Set("ssShoppingCart", listItems);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
