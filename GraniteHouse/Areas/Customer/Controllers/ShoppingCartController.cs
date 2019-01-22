@@ -42,5 +42,41 @@ namespace GraniteHouse.Areas.Customer.Controllers
             }
             return View(shoppingCartViewModel);
         }
+
+
+        //Post: Shopping Cart - Schedule appointment
+        [HttpPost, ActionName("Index")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ScheduleAppointment()
+        {
+            List<int> listItems = HttpContext.Session.Get<List<int>>("ssShoppingCart");
+            shoppingCartViewModel.Appointment.AppointmentDate = shoppingCartViewModel.Appointment.AppointmentDate //Workaround to push appointment date time in a single column appointment date
+                                                                .AddHours(shoppingCartViewModel.Appointment.AppointmentTime.Hour)
+                                                                .AddMinutes(shoppingCartViewModel.Appointment.AppointmentTime.Minute);
+            Appointment appointment = shoppingCartViewModel.Appointment;
+            _db.Appointment.Add(appointment);
+            _db.SaveChanges();
+
+            int appointmentId = appointment.Id;
+
+            //Use this Id to insert into ProductSelectedAppointment
+            foreach(int productId in listItems)
+            {
+                ProductSelectedForAppointment productSelectedForAppointment = new ProductSelectedForAppointment()
+                {
+                    AppointmentId = appointmentId,
+                    ProductId = productId
+                };
+                _db.ProductSelectedForAppointment.Add(productSelectedForAppointment);                
+            }
+             _db.SaveChanges();
+
+            //Clear out the session and reset 
+            listItems = new List<int>();
+            HttpContext.Session.Set("ssShoppingCart", listItems);
+
+            return RedirectToAction(nameof(Index));
+        }
+        
     }
 }

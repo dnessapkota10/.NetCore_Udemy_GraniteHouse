@@ -12,7 +12,7 @@ namespace GraniteHouse.Models
 
         public int AppointmentId { get; set; }
 
-        [ForeignKey("AppointmnetId")]
+        [ForeignKey("AppointmentId")]
         public virtual Appointment Appointment { get; set; }
 
         public int ProductId { get; set; }
