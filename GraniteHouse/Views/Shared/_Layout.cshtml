@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using GraniteHouse.Extensions
+@using GraniteHouse.Utility
+
+<!--Inject HttpContextAccessor-->
+@inject IHttpContextAccessor HttpContextAccessor;
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -27,35 +34,39 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="ProductTypes" asp-action="Index">Product Types</a></li>
                 <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a></li>
+                <!--Display no of items in shopping carts-->
+                @if (HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart") != null)
+                {
+                    <li style="color:white;">
+                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
+                            <i class="fas fa-shopping-cart">
+                                &nbsp;
+                                @{
+                                    var count = HttpContextAccessor.HttpContext.Session.Get<List<int>>("ssShoppingCart").Count; //no of items in shopping cart
+                                }
+                                (@count)
+                            </i>
+                        </a>
+                    </li>
+                }
+                else //!-- nothing in the session/cart
+                {
+                    <li style="color:white;">
+                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index" class="nav-link">
+                            <i class="fas fa-shopping-cart">
+                                &nbsp;
+                                (0)
+                            </i>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
         <div>
             <partial name="_LoginPartial" />
         </div>
     </nav>
-    <!--
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">GraniteHouse</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-                <partial name="_LoginPartial" />
-            </div>
-        </div>
-    </nav> -->
-
+   
     <partial name="_CookieConsentPartial" />
 
     <div class="container body-content">

@@ -5,35 +5,65 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using GraniteHouse.Models;
+using GraniteHouse.Data;
+using Microsoft.EntityFrameworkCore;
+using GraniteHouse.Extensions;
 
 namespace GraniteHouse.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ApplicationDbContext _db;
+
+        public HomeController(ApplicationDbContext db)
         {
-            return View();
+            _db = db;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var productList = await _db.Product.Include(m => m.ProductTypes).ToListAsync(); //included ProductTypes if needed - incase
+            return View(productList);
         }
 
-        public IActionResult About()
+        //Get : Product Detail
+        public async Task<IActionResult> Details(int ? id)
         {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            var product = await _db.Product.Include(m => m.ProductTypes).Where(m=>m.Id==id).FirstOrDefaultAsync(); //included ProductTypes if needed - incase
+            return View(product);
+        }
+        
+        //Post : Product Detail - Add items to bag
+        [HttpPost, ActionName("Details")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DetailsPost(int id)
+        {
+            List<int> listShoppingCart = HttpContext.Session.Get<List<int>>("ssShoppingCart"); //Get from Session using Extension method of Extension class SesssionExtensions
+            if (listShoppingCart == null)
+            {
+                listShoppingCart = new List<int>();
+            }
+            listShoppingCart.Add(id);
+            HttpContext.Session.Set("ssShoppingCart", listShoppingCart); //Setting our session variable ssShoppingCart
+            return RedirectToAction("Index", "Home", new { area = "Customer" });
         }
 
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
 
-            return View();
+        //Remove item from bag/cart
+        public IActionResult Remove(int id)
+        {
+            List<int> listShoppingCart = HttpContext.Session.Get<List<int>>("ssShoppingCart"); //Get from Session using Extension method of Extension class SesssionExtensions
+            if (listShoppingCart.Count > 0)
+            {
+                if (listShoppingCart.Contains(id))
+                {
+                    listShoppingCart.Remove(id);
+                }
+            }
+            HttpContext.Session.Set("ssShoppingCart", listShoppingCart); //Setting our session variable ssShoppingCart
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
