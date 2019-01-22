@@ -4,14 +4,16 @@ using GraniteHouse.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GraniteHouse.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190122192548_addApppointmentAndProductSelectedForAppointment")]
+    partial class addApppointmentAndProductSelectedForAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,11 +75,13 @@ namespace GraniteHouse.Data.Migrations
 
                     b.Property<int>("AppointmentId");
 
+                    b.Property<int>("AppointmnetId");
+
                     b.Property<int>("ProductId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId");
+                    b.HasIndex("AppointmnetId");
 
                     b.HasIndex("ProductId");
 
@@ -275,7 +279,7 @@ namespace GraniteHouse.Data.Migrations
                 {
                     b.HasOne("GraniteHouse.Models.Appointment", "Appointment")
                         .WithMany()
-                        .HasForeignKey("AppointmentId")
+                        .HasForeignKey("AppointmnetId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GraniteHouse.Models.Product", "Product")
